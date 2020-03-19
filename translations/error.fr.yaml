@@ -1,0 +1,8 @@
+http_error:
+    bad_request: 'Les paramêtres fournis pour la requête ne sont pas valides.'
+    forbidden: 'Vous n''avez pas les droits d''accéder à cette resource.'
+    unexpected_error: 'Une erreur inattendue est survenue pendant le traitement de la requête.'
+    service_unavailable: 'La demande n''a pas pu être traitée en raison d''un problème système.'
+
+user:
+    not_found: 'L''utilisateur demandé est introuvable à partir de l''identifiant "%id%" fournit.'

@@ -1,0 +1,8 @@
+http_error:
+    bad_request: 'The parameters provided for the query are not valid.'
+    forbidden: 'Vous n''avez pas les droits d''accéder à cette resource.'
+    unexpected_error: 'You do not have the rights to access this resource.'
+    service_unavailable: 'The request could not be processed because of a system problem.'
+
+user:
+    not_found: 'The requested user can not be found from the identifier "%id%" provided.'

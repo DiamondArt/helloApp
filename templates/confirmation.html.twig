@@ -1,0 +1,6 @@
+{# templates/emails/confirmation.html.twig #}
+
+<h3> Hi {{ user.getUsername() }} please confirm your account.</h3>
+
+<p>clicking  <a href="{{url('confirmToken',{'token': user.getConfirmationToken()} )}}">
+here </a>to confirm your account</p>
