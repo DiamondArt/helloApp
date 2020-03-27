@@ -39,7 +39,7 @@ class User implements AdvancedUserInterface, TimestampableInterface
 
    /**
      * @ORM\Column(name="username",type="string", unique=true)
-     * @Groups({"summary", "details","create","update"})
+     * @Groups({"summary", "details","create","update","auth-token"})
      * @Assert\NotBlank()
      * @var string
      */
@@ -47,7 +47,7 @@ class User implements AdvancedUserInterface, TimestampableInterface
 
     /**
      * @ORM\Column(name="email",type="string", unique=true, nullable=true)
-     * @Groups({"summary", "details","create","update"})
+     * @Groups({"summary", "details","create","update","auth-token"})
 	 * @Assert\Email()
      * @var string
      */
@@ -56,7 +56,7 @@ class User implements AdvancedUserInterface, TimestampableInterface
     /**
 	 * @ORM\Column(type="string", length=148)
 	 * @Assert\NotBlank()
-	 * @Groups({"create"})
+	 * @Groups({"create","auth-token"})
 	 * @var string
 	 */
 	protected $password;
@@ -113,9 +113,10 @@ class User implements AdvancedUserInterface, TimestampableInterface
 	 * @var \DateTime
 	 */
 	protected $passwordRequestedAt;
+
 	/**
 	 * @ORM\Column(name="plain_password", type="string", nullable=true)
-	 * @Groups({"passwordUpdate"})
+	 * @Groups({"passwordUpdate","create"})
 	 * @var string
 	 */
     private $plainPassword;
@@ -225,15 +226,20 @@ class User implements AdvancedUserInterface, TimestampableInterface
 		return !$this->locked;
 	}
 
+	public function getLocked()
+	{
+		return $this->locked;
+    }
+
 	public function setLocked(bool $locked) :self
 	{
 		$this->locked = $locked;
 		return $this;
 	}
 
-	public function hasPropertiesVerified() :bool
+	public function getPropertiesVerified()
 	{
-		return (self::PROPERTY_VERIFIED_EMAIL | self::PROPERTY_VERIFIED_PHONE_NUMBER) === $this->propertiesVerified;
+		return $this->propertiesVerified;
     }
 
     public function addPropertyVerified(int $propertiesVerified) :self
@@ -309,7 +315,7 @@ class User implements AdvancedUserInterface, TimestampableInterface
 
 	public function getSalt() {}
 
-	public function getPlainPassword() :string
+	public function getPlainPassword()
 	{
 		return $this->plainPassword;
 	}

@@ -30,27 +30,40 @@ class UserController extends AbstractController
         $this->managerRegistry = $managerRegistry;
     }
 
+
+    /**
+     * @Route("/api/users", name="show_all_users", methods={"GET"})
+     * @param User $users
+     */
+    public function allUsers(UserRepository $repo)
+    {
+        $users = $repo->findAll();
+        $user = $this->serializer->serialize($users, 'json',['groups' => ['details']]);
+
+        return new JsonResponse($user,Response::HTTP_OK,[], true);
+    }
+
     /**
      * create user function
      *
      * @param Request $request
-     * @Route("/registration", name="userRegister", methods={"POST"})
+     * @Route("/api/registration", name="userRegister", methods={"POST"})
      */
     public function create(Request $request)
     {
         $data = $request->getContent();
         $entityManager = $this->managerRegistry->getManager();
+       // $data =  json_decode($request->request->get('$data'),true);
 
         try{
              $user = $this->serializer->deserialize($data, User::class,'json');
              $errors = $this->validator->validate($user,null, ['create']);
 
-             if(count($errors)){
+             if(count($errors)) {
                  return new JsonResponse($errors, Response::HTTP_BAD_REQUEST,[],true);
              }
 
-             if($user->getRoles() == ['ROLE_USER'])
-             {
+             if($user->getRoles() == ['ROLE_USER']) {
                  $user->setLocked(false);
                  $user->setEnabled(false);
                  $user->setPropertiesVerified(false);
@@ -79,11 +92,11 @@ class UserController extends AbstractController
     /**
      * Undocumented function
      *
-     * @param UserRepository $user
+     * @param UserRepository $repo
      * @param string $id
-     * @Route("/profile", name="getUserProfile", methods={"GET"})
+     * @Route("/api/profile/{id}", name="getUserProfile", methods={"GET"})
      */
-    public function show(UserRepository $user,$id)
+    public function show(UserRepository $repo,$id)
     {
         $user = $repo->find($id);
 
@@ -101,7 +114,7 @@ class UserController extends AbstractController
      *
      * @param Request $request
      * @param string $id
-     * @Route("/updateProfile/{id}", name="update")
+     * @Route("/api/updateProfile/{id}", name="update")
      */
     public function update(Request $request,$id)
     {
@@ -109,7 +122,7 @@ class UserController extends AbstractController
         $manager = $this->managerRegistry->getManager();
 
         $user = $repo->find($id);
-        $this->serializer->deserialize($data, Person::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+        $this->serializer->deserialize($data, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
 
         if(null!=$user) {
             $errors = $this->validator->validate($user, null, ['update']);
@@ -129,7 +142,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/deleteProfile/{id}", name="delete_user")
+     * @Route("/api/deleteProfile/{id}", name="delete_user")
      * @param User $user
     */
     public function delete(UserRepository $repo,$id)

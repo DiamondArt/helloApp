@@ -1,0 +1,77 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<!-- Page Content -->
+<div class="body" >
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-5 col-md-4 text-center">
+                <h1 class='text-white'>HeloApp Login Form</h1>
+                <div class="form-login"></br>
+                    <h4>Secure Login</h4>
+                    </br>
+                    <strong id="error" class="text-info"></strong>
+                    <form id="formConnect">
+                        <input type="text" name="username" class="form-control input-sm chat-input" placeholder="username"/>
+                        </br></br>
+                        <input type="text" name="password" class="form-control input-sm chat-input" placeholder="password"/>
+                        </br></br>
+                        <div class="wrapper">
+                                <span class="group-btn">
+                                    <button type="submit" class="btn btn-primary btn-md">login <i class="fa fa-sign-in"></i></button>
+                                    <a href="#" class="text-info">créer un compte</i></a>
+                                </span>
+
+                        </div>
+                    </form>
+                    <div id="textArea"></div>
+                </div>
+            </div>
+        </div>
+        </br></br></br>
+        <!--footer-->
+        <div class="footer text-white text-center">
+            <p>© 2020 HeloApp . All rights reserved | Design by Meldev</p>
+        </div>
+        <!--//footer-->
+    </div>
+</div>
+
+<script>
+
+    function createAuthToken() {
+
+         const data = new FormData(form);
+     let username = data.get('username');
+     let password = data.get('password');
+     var completeRestURL = 'http://127.0.0.1:8000/api/login';
+
+        var method = "POST";
+        let postData = JSON.stringify(Array.from(data).reduce((o,[k,v])=>(o[k]=v,o),{}));
+
+        var url = completeRestURL;
+        var async = true;
+        var request = new XMLHttpRequest();
+        var token;
+        request.onload = function() {
+            console.log("ONLOAD");
+            var status = request.status; // HTTP response status, e.g., 200 for "200 OK"
+            console.log(status);
+             var response = JSON.parse(request.response);
+             localStorage.setItem('token', response.token);
+
+        }
+
+        request.open(method, url, async);
+        request.setRequestHeader("Content-Type", "application/json");
+        request.setRequestHeader("Accept", "application/json");
+        request.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('token'));
+
+        request.send(postData);
+    }
+        let form = document.getElementById("formConnect");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+         createAuthToken();
+ });
+</script>
+{% endblock %}

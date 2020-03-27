@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+  <br> </br> </br>
+
+<div class="container-fluid">
+  <div class="row  mb-30">
+  {% for user in users %}
+   <div class="col-md-3">
+    <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+     <div class="card-header"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{user.username}}</font></font></div>
+     <div class="card-body">
+        <h4 class="card-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{user.email}}</font></font></h4>
+      </div>
+    </div>
+   </div>
+   {% endfor %}
+   {% for header in headers %}
+   <p>{{ headers }}</p>
+   {% endfor %}
+ </div>
+</div>
+
+{% endblock %}

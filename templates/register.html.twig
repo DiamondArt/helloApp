@@ -1,0 +1,72 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<!-- Page Content -->
+<div class="body">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-5 col-md-4 text-center">
+                <h1 class='text-white'>HelloApp Register Form</h1>
+                <div class="form-login"></br>
+                    <h4>Secure Login</h4>
+                    </br>
+                        <strong id="error" class="text-info"></strong>
+                    <form id="formRegister">
+                        <input type="text" name="username" class="form-control input-sm chat-input" placeholder="username"/>
+                        </br></br>
+                        <input type="email" name="email" class="form-control input-sm chat-input" placeholder="email"/>
+                        </br></br>
+                        <input type="password" name="password" class="form-control input-sm chat-input" placeholder="password"/>
+                        </br></br>
+                        <div class="wrapper">
+                            <span class="group-btn">
+                                <button type="submit" class="btn btn-primary btn-md">Register <i class="fa fa-sign-in"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </br></br></br>
+        <!--footer-->
+        <div class="footer text-white text-center">
+            <p>© 2020 HelloApp . All rights reserved | Design by Meldev</p>
+        </div>
+        <!--//footer-->
+    </div>
+</div>
+<script>
+
+window.addEventListener("load", function () {
+
+  function sendData() {
+
+     let XHR = new XMLHttpRequest();
+     const data = new FormData(form);
+
+     XHR.addEventListener("load", function(event) {
+        if(this.status == 201) {
+            document.location.href="{{path('home')}}";
+        } else {
+            document.getElementById("error").innerHTML = "Username or Email already use";
+            }
+     });
+
+        XHR.addEventListener("error", function(event) {
+        alert('Oups! Quelque chose s\'est mal passé.');
+        });
+
+        XHR.open('POST', 'http://127.0.0.1:8000/api/registration');
+        XHR.setRequestHeader("Content-Type", "application/json");
+        let dataJson = JSON.stringify(Array.from(data).reduce((o,[k,v])=>(o[k]=v,o),{}));
+        XHR.send(dataJson);
+ }
+
+        let form = document.getElementById("formRegister");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            sendData();
+        });
+});
+
+</script>
+{% endblock %}

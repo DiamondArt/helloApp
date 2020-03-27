@@ -4,10 +4,16 @@ security:
         App\Entity\User:
             algorithm: auto
     providers:
+        auth_token_user_provider:
+            id: App\Security\AuthTokenUserProvider
+
         in_database:
             entity:
                 class: App\Entity\User
                 property: username
+
+        api_key_user_provider:
+            id: App\Security\ApiKeyUserProvider
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -25,10 +31,20 @@ security:
             pattern:   ^/api
             stateless: true
             anonymous: true
+            simple_preauth:
+                authenticator: App\Security\ApiKeyAuthenticator
+            provider: api_key_user_provider
+            #simple_preauth:
+                #authenticator: App\Security\AuthTokenAuthenticator
+            # provider: auth_token_user_provider
 
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            #guard:
+            #simple_preauth:
+                #authenticator:
+                   # - lexik_jwt_authentication.jwt_token_authenticator
+                     #- App\Security\TokenAuthenticator
+            #provider: in_database
+
             user_checker: App\Service\UserEnabledChecker
 
             # activate different ways to authenticate
@@ -40,5 +56,11 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+          - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+          - { path: ^/api/users, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+          - { path: ^/api/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+          - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+          - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+          - { path: ^/api/homes, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+          - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+

@@ -9,15 +9,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class AuthenticationSuccessListener
 {
-    private $jwtTokenTTL;
-
-    private $cookieSecure = false;
-
-    public function __construct($ttl)
-    {
-        $this->jwtTokenTTL = $ttl;
-    }
-
     /**
      * This function is responsible for the authentication part
      *
@@ -26,20 +17,15 @@ class AuthenticationSuccessListener
      */
     public function onAuthenticationSuccess(AuthenticationSuccessEvent $event)
     {
-        /** @var JWTAuthenticationSuccessResponse $response */
-        $response = $event->getResponse();
         $data = $event->getData();
-        $tokenJWT = $data['token'];
+        $user = $event->getUser();
 
-        unset($data['token']);
-        unset($data['refresh_token']);
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $data['id'] = $user->getId();
 
         $event->setData($data);
-
-        $response->headers->setCookie(new Cookie('BEARER', $tokenJWT, (
-            new \DateTime())
-            ->add(new \DateInterval('PT' . $this->jwtTokenTTL . 'S')), '/', null, $this->cookieSecure));
-
-        return $response;
     }
 }

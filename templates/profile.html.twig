@@ -1,0 +1,59 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<!-- Page Content -->
+<div class="body" >
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-5 col-md-4 text-center">
+                <h1 class='text-white'>HeloApp welcome Form</h1>
+            </div>
+        </div>
+        </br></br></br>
+        <!--footer-->
+        <div class="footer text-white text-center">
+            <p>© 2020 HeloApp . All rights reserved | Design by Meldev</p>
+        </div>
+        <!--//footer-->
+    </div>
+</div>
+
+<script>
+<script>
+window.addEventListener("load", function () {
+
+  function sendData() {
+
+        const data = new FormData(form);
+        const token = window.localStorage.getItem('token');
+
+        let XHR = new XMLHttpRequest();
+        let dataJson = JSON.stringify(Array.from(data).reduce((o,[k,v])=>(o[k]=v,o),{}));
+        XHR.addEventListener("load", function(event) {
+
+         let response = JSON.parse(this.response);
+         if(this.status == 200) {
+          console.log("hello");
+          } else if(response.code == 401 && response.message == "Invalid credentials.") {
+            document.getElementById("error").innerHTML = "Username or Email is bad";
+          } else if(response.code == 401 && response.message == "Account is disabled.") {
+            document.getElementById("error").innerHTML = "Veuiller confirmer votre compte par mail";
+            }
+        });
+
+        XHR.addEventListener("error", function(event) {
+            alert('Oups! Quelque chose s\'est mal passé.');
+        });
+        XHR.open('GET', 'http://127.0.0.1:8000/api/user')
+        XHR.getResponseHeader("Content-Type", "application/json");
+        XHR.getResponseHeader('Authorization','Bearer ' + localStorage.getItem('token'));
+        XHR.send(dataJson);
+    }
+        let form = document.getElementById("formConnect");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            sendData();
+        });
+
+});
+</script></script>
+{% endblock %}

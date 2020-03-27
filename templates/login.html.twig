@@ -1,0 +1,77 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<!-- Page Content -->
+<div class="body" >
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-5 col-md-4 text-center">
+                <h1 class='text-white'>HeloApp Login Form</h1>
+                <div class="form-login"></br>
+                    <h4>Secure Login</h4>
+                    </br>
+                    <strong id="error" class="text-info"></strong>
+                    <form id="formConnect">
+                        <input type="text" name="username" class="form-control input-sm chat-input" placeholder="username"/>
+                        </br></br>
+                        <input type="text" name="password" class="form-control input-sm chat-input" placeholder="password"/>
+                        </br></br>
+                        <div class="wrapper">
+                                <span class="group-btn">
+                                    <button type="submit" class="btn btn-primary btn-md">login <i class="fa fa-sign-in"></i></button>
+                                    <a href="#" class="text-info">créer un compte</i></a>
+                                </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </br></br></br>
+        <!--footer-->
+        <div class="footer text-white text-center">
+            <p>© 2020 HeloApp . All rights reserved | Design by Meldev</p>
+        </div>
+        <!--//footer-->
+    </div>
+</div>
+<script>
+window.addEventListener("load", function () {
+
+  function sendData() {
+
+        const data = new FormData(form);
+        const token = window.localStorage.getItem('token');
+
+        let XHR = new XMLHttpRequest();
+        let dataJson = JSON.stringify(Array.from(data).reduce((o,[k,v])=>(o[k]=v,o),{}));
+        XHR.addEventListener("load", function(event) {
+
+         let response = JSON.parse(this.response);
+         if(this.status == 200) {
+            window.localStorage.setItem('token', response.token);
+            document.location.href="{{path('profile_page')}}";
+
+          } else if(response.code == 401 && response.message == "Invalid credentials.") {
+            document.getElementById("error").innerHTML = "Username or Email is bad";
+          } else if(response.code == 401 && response.message == "Account is disabled.") {
+            document.getElementById("error").innerHTML = "Veuiller confirmer votre compte par mail";
+            }
+        });
+
+        XHR.addEventListener("error", function(event) {
+            alert('Oups! Quelque chose s\'est mal passé.');
+        });
+        XHR.open('POST', 'http://127.0.0.1:8000/api/login')
+        XHR.setRequestHeader("Content-Type", "application/json");
+        XHR.setRequestHeader("Accept", "application/json");
+        XHR.setRequestHeader('Authorization','Bearer ' + token);
+        XHR.send(dataJson);
+    }
+        let form = document.getElementById("formConnect");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            sendData();
+        });
+
+});
+</script>
+{% endblock %}
