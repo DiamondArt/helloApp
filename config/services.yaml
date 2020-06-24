@@ -29,6 +29,8 @@ services:
 
     App\Security\ApiKeyAuthenticator:
 
+    App\Security\JwtTokenAuthenticator:
+    ######
     auth_token_user_provider:
         class: App\Security\AuthTokenUserProvider
         arguments: ["@auth_token_repository", "@user_repository"]
@@ -38,6 +40,7 @@ services:
         class:   Doctrine\ORM\EntityManager
         factory: ["@doctrine.orm.entity_manager", "getRepository"]
         arguments: ["App:AuthToken"]
+
     user_repository:
         class:   Doctrine\ORM\EntityManager
         factory: ["@doctrine.orm.entity_manager", "getRepository"]
@@ -45,7 +48,6 @@ services:
 
     auth_token_authenticator:
         class:     App\Security\AuthTokenAuthenticator
-        arguments: ["@security.http_utils"]
         public:    false
 
     App\Service\UserConfirmationService:

@@ -1,8 +1,6 @@
 <?php
 namespace App\Security;
 
-
-
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\HttpClient\NativeHttpClient;

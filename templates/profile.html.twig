@@ -21,9 +21,6 @@
 <script>
 window.addEventListener("load", function () {
 
-  function sendData() {
-
-        const data = new FormData(form);
         const token = window.localStorage.getItem('token');
 
         let XHR = new XMLHttpRequest();
@@ -44,15 +41,8 @@ window.addEventListener("load", function () {
             alert('Oups! Quelque chose s\'est mal passé.');
         });
         XHR.open('GET', 'http://127.0.0.1:8000/api/user')
-        XHR.getResponseHeader("Content-Type", "application/json");
-        XHR.getResponseHeader('Authorization','Bearer ' + localStorage.getItem('token'));
-        XHR.send(dataJson);
-    }
-        let form = document.getElementById("formConnect");
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-            sendData();
-        });
+        XHR.setResponseHeader("Content-Type", "application/json");
+        XHR.setResponseHeader('Authorization','Bearer ' + localStorage.getItem('token'));
 
 });
 </script></script>

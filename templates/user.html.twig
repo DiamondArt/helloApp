@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+  <br> </br> </br>
+
+<div class="container-fluid">
+  <div class="row  mb-30">
+  {% for user in users %}
+   <div class="col-md-3">
+    <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+     <div class="card-header"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{user.username}}</font></font></div>
+     <div class="card-body">
+        <h4 class="card-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{user.email}}</font></font></h4>
+      </div>
+    </div>
+   </div>
+   {% endfor %}
+   {% for header in headers %}
+   <p>{{ headers }}</p>
+   {% endfor %}
+ </div>
+</div>
+<script>
+window.addEventListener("load", function () {
+
+       let XHR = new XMLHttpRequest();
+        XHR.addEventListener("load", function(event) {
+
+         if(this.status == 200) {
+             console.log("hello");
+          } else if(response.code == 401 && response.message == "Invalid credentials.") {
+            document.getElementById("error").innerHTML = "Username or Email is bad";
+          } else if(response.code == 401 && response.message == "Account is disabled.") {
+            document.getElementById("error").innerHTML = "Veuiller confirmer votre compte par mail";
+            }
+        });
+
+               XHR.addEventListener("error", function(event) {
+            alert('Oups! Quelque chose s\'est mal passé.');
+        });
+        XHR.open('POST', 'http://127.0.0.1:8000/api/users')
+        XHR.setRequestHeader("Content-Type", "application/json");
+        XHR.setRequestHeader("Accept", "application/json");
+        XHR.getRequestHeader('Authorization','Bearer ' + window.localStorage.getItem('token');
+);
+    }
+});
+</script>
+{% endblock %}

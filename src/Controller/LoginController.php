@@ -32,7 +32,6 @@ class LoginController extends AbstractController
         );
     }
 
-    
     /**
      * Undocumented function
      *

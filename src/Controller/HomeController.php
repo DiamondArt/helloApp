@@ -40,10 +40,12 @@ class HomeController extends AbstractController
             // ...
         ]);
         $content = $response->getContent();
-        $headers = $response->getHeaders();
+        $headers = $response->getHeaders('Authorization');
+        $header = $request->headers->get('Authorization');
+
         $tableHeaders = $serializer->encode($headers, 'json');
 
-        var_dump($headers);
+        var_dump($header);
         die();
        // $regions = file_get_contents('http://localhost:8000/api/users');
         // $tableRegions = $serializer->decode($regions, 'json');

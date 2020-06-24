@@ -12,11 +12,10 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
 
-class AuthTokenAuthenticator extends AbstractGuardAuthenticator
+class JwtTokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
     private $jwtEncoder;
@@ -26,59 +25,32 @@ class AuthTokenAuthenticator extends AbstractGuardAuthenticator
         $this->jwtEncoder = $jwtEncoder;
         $this->em = $em;
     }
-    
-    public function supports(Request $request)
-    {
-        return $request->headers->has('Bearer');
-    }
 
-    /**
-     * Called on every request. Return whatever credentials you want to
-     * be passed to getUser() as $credentials.
-     */
     public function getCredentials(Request $request)
     {
-        $authTokenHeader = $request->headers->get('Bearer');
-
-        if (!$authTokenHeader) {
-            throw new BadCredentialsException('Bearer header is required');
-        }
-
-        return array(
-            'anon.',
-            $authTokenHeader,
-            $providerKey
+        $extractor = new AuthorizationHeaderTokenExtractor(
+            'Bearer',
+            'Authorization'
         );
+        $token = $extractor->extract($request);
+        if (!$token) {
+            return;
+        }
+        return $token;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-
-        if (!$userProvider instanceof AuthTokenUserProvider) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'The user provider must be an instance of AuthTokenUserProvider (%s was given).',
-                    get_class($userProvider)
-                )
-            );
+        if (null === $credentials) {
+            // The token header was empty, authentication fails with HTTP Status
+            // Code 401 "Unauthorized"
+            return null;
         }
-        $data = $this->jwtEncoder->decode($credentials);
 
-        if ($data === false) {
-            throw new CustomUserMessageAuthenticationException('Invalid Token');
-        }
-        try {
-            $data = $this->jwtEncoder->decode($credentials);
-
-        } catch (JWTDecodeFailureException $e) {
-            throw new CustomUserMessageAuthenticationException('Invalid Token');
-        }
-        $authToken = $userProvider->getAuthToken($credentials);
-        $user = $authToken->getUser();
-        $username = $data['username'];
-
-       //return $user;
-        return $this->em->getRepository(User::class)->findOneBy(['username' => $username]);
+        // if a User is returned, checkCredentials() is called
+        return $this->em->getRepository(User::class)
+            ->findOneBy(['apiToken' => $credentials])
+        ;
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -107,5 +79,8 @@ class AuthTokenAuthenticator extends AbstractGuardAuthenticator
     public function supportsRememberMe()
     {
         return false;
+    }
+    public function supports(Request $request)
+    {
     }
 }

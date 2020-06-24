@@ -30,12 +30,11 @@ class AuthToken implements TimestampableInterface
     protected $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      * @Groups({"auth-token"})
      * @var string
      */
     protected $payload;
-
 
     /**
      * @ORM\ManyToOne(targetEntity="User")
@@ -71,6 +70,5 @@ class AuthToken implements TimestampableInterface
     {
         $this->user = $user;
         return $this;
-
     }
 }
